@@ -9,18 +9,13 @@ RUN pecl install swoole && docker-php-ext-enable swoole
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
 WORKDIR /var/www
 
 COPY ./src /var/www
+RUN ls -la /var/www
 
-RUN composer install
-
-RUN php artisan octane:install --server=swoole
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
 
 EXPOSE 8000
-
-CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
