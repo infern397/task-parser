@@ -19,7 +19,8 @@ RUN composer install
 
 RUN php artisan octane:install --server=swoole
 
+COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
+
 EXPOSE 8000
 
-# Запуск Laravel Octane
 CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
