@@ -2,9 +2,14 @@
 
 ## Данные для доступа к БД
 
-- **Хост**: `mysql`
-- **Пользователь**: `laravel`
-- **Пароль**: `secret`
+- **База**: `semenmocha`
+- **Логин**: `semenmocha`
+- **Пароль**: `3ZY2EnXX7YRJ_SN8`
+- **URL**: `https://fvh1.spaceweb.ru/phpMyAdmin/index.php?route=/database/structure&db=semenmocha`
+
+*Название базы и логин таковы из-за политики сайта, что первая, и **единственная доступная**, бд имеет имя пользователя, ну и
+образает его для полного
+счастья :)*
 
 ## Таблицы
 
@@ -90,15 +95,19 @@ php artisan octane:start --server=swoole --host=0.0.0.0 --port=8000
 ```bash
 php artisan fetch:all
 ```
+
 ```bash
 php artisan fetch:orders
 ```
+
 ```bash
 php artisan fetch:incomes
 ```
+
 ```bash
 php artisan fetch:sales
 ```
+
 ```bash
 php artisan fetch:stocks
 ```
