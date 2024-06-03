@@ -1,12 +1,10 @@
 <?php
 
-use App\Models\Companies\Company;
-use App\Models\Companies\Office;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAccountsTable extends Migration
+class CreateApiServiceTokenType extends Migration
 {
     /**
      * Run the migrations.
@@ -15,12 +13,10 @@ class CreateAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('api_service_token_type', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('api_service_id')->constrained('api_services')->onDelete('cascade');
-            $table->string('username');
-            $table->string('password');
+            $table->foreignId('token_type_id')->constrained('token_types')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreateAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('api_service_token_type');
     }
 }
