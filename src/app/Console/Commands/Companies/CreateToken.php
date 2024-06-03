@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands\Companies;
 
+use App\Models\Companies\Account;
+use App\Models\Companies\Token;
+use App\Models\Companies\TokenType;
 use Illuminate\Console\Command;
 
 class CreateToken extends Command
@@ -11,14 +14,14 @@ class CreateToken extends Command
      *
      * @var string
      */
-    protected $signature = 'create:token {value} {account_id}';
+    protected $signature = 'create:token {accountId} {tokenTypeId} {token}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create a new token';
 
     /**
      * Create a new command instance.
@@ -37,6 +40,25 @@ class CreateToken extends Command
      */
     public function handle()
     {
+        $accountId = $this->argument('accountId');
+        $tokenTypeId = $this->argument('tokenTypeId');
+        $token = $this->argument('token');
+
+        $account = Account::find($accountId);
+        $tokenType = TokenType::find($tokenTypeId);
+
+        if (!$account || !$tokenType) {
+            $this->error("Account or token type not found.");
+            return 0;
+        }
+
+        $token = Token::create([
+            'account_id' => $accountId,
+            'token_type_id' => $tokenTypeId,
+            'token' => $token
+        ]);
+
+        $this->info("Token created successfully for account ID {$account->id} and token type '{$tokenType->type}' with ID {$token->id}");
         return 0;
     }
 }

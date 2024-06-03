@@ -38,11 +38,9 @@ class CreateCompany extends Command
      */
     public function handle()
     {
-        $company = new Company();
-        $company->name = $this->argument('name');
-        $company->save();
-
-        $this->info('Company created successfully.');
+        $name = $this->argument('name');
+        $company = Company::create(['name' => $name]);
+        $this->info("Company '{$company->name}' created successfully with ID {$company->id}");
 
         return 0;
     }

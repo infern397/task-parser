@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Companies;
 
-use App\Models\Companies\ApiServices;
+use App\Models\Companies\ApiService;
 use Illuminate\Console\Command;
 
 class CreateApiService extends Command
@@ -38,11 +38,9 @@ class CreateApiService extends Command
      */
     public function handle()
     {
-        $apiServices = new ApiServices();
-        $apiServices->name = $this->argument('name');
-        $apiServices->save();
-
-        $this->info('API service created successfully.');
+        $name = $this->argument('name');
+        $apiService = ApiService::create(['name' => $name]);
+        $this->info("API service '{$apiService->name}' created successfully with ID {$apiService->id}");
 
         return 0;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Companies;
 
+use App\Models\Companies\TokenType;
 use Illuminate\Console\Command;
 
 class CreateTokenType extends Command
@@ -11,14 +12,14 @@ class CreateTokenType extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'create:tokentype {type}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create a new token type';
 
     /**
      * Create a new command instance.
@@ -37,6 +38,9 @@ class CreateTokenType extends Command
      */
     public function handle()
     {
+        $type = $this->argument('type');
+        $tokenType = TokenType::create(['type' => $type]);
+        $this->info("Token type '{$tokenType->type}' created successfully with ID {$tokenType->id}");
         return 0;
     }
 }
