@@ -6,6 +6,7 @@ use App\Models\Income;
 use App\Models\Stock;
 use App\Services\ApiService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class FetchIncomes extends FetchDataCommand
 {
@@ -40,6 +41,7 @@ class FetchIncomes extends FetchDataCommand
      */
     public function handle(ApiService $apiService)
     {
+        Log::info('UpdateDatabaseCommand is running');
         $this->fetchDataAndSave(
             $apiService,
             'incomes',
