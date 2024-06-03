@@ -82,6 +82,12 @@ php artisan migrate
 php artisan octane:start --server=swoole --host=0.0.0.0 --port=8000
 ```
 
+Для ежедневного обновления данных
+
+```bash
+php artisan schedule:work
+```
+
 После выполнения этих шагов ваш проект должен быть готов к работе.
 
 ### Доступ к приложению
