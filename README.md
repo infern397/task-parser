@@ -55,7 +55,7 @@ docker-compose up -d
 Перейдите в терминал контроллера
 
 ```bash
-docker-compose exec -ti app bash
+docker-compose exec -ti php bash
 ```
 
 Установите зависимости

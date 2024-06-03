@@ -1,9 +1,9 @@
 services:
-  app:
+  php:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
-    container_name: laravel_octane
+    container_name: php
     restart: unless-stopped
     working_dir: /var/www
     volumes:
@@ -28,7 +28,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - laravel
 
