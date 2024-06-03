@@ -11,7 +11,6 @@ class Token extends Model
 
     protected $fillable = [
         'account_id',
-        'api_service_id',
         'token_type_id',
         'token',
     ];
@@ -19,5 +18,11 @@ class Token extends Model
     public function account()
     {
         return $this->belongsTo(Account::class);
+    }
+
+    // Связь с типом токена
+    public function tokenType()
+    {
+        return $this->belongsTo(TokenType::class);
     }
 }

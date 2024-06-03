@@ -5,27 +5,18 @@ namespace App\Models\Companies;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Account extends Model
+class TokenType extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'company_id',
+        'type',
         'api_service_id',
-        'username',
-        'password',
     ];
 
-    // Связь с компанией
-    public function company()
+    public function apiServices()
     {
-        return $this->belongsTo(Company::class);
-    }
-
-    // Связь с API сервисом
-    public function apiService()
-    {
-        return $this->belongsTo(ApiService::class);
+        return $this->belongsToMany(ApiService::class, 'api_service_token_type');
     }
 
     // Связь с токенами

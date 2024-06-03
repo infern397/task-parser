@@ -16,7 +16,6 @@ class CreateTokenTypesTable extends Migration
         Schema::create('token_types', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->foreignId('api_service_id')->constrained();
             $table->timestamps();
         });
     }
