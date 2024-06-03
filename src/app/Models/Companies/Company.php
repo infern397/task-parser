@@ -13,8 +13,8 @@ class Company extends Model
         'name',
     ];
 
-    public function offices()
+    public function accounts()
     {
-        return $this->hasMany(Office::class);
+        return $this->hasMany(Account::class);
     }
 }

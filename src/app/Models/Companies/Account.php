@@ -19,8 +19,8 @@ class Account extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function accounts()
+    public function tokens()
     {
-        return $this->hasMany(Account::class);
+        return $this->hasMany(Token::class);
     }
 }
