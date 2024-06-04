@@ -19,7 +19,6 @@ class TokenType extends Model
         return $this->belongsToMany(ApiService::class, 'api_service_token_type');
     }
 
-    // Связь с токенами
     public function tokens()
     {
         return $this->hasMany(Token::class);

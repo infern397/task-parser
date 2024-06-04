@@ -4,6 +4,7 @@ namespace App\Console\Commands\Companies;
 
 use App\Models\Companies\ApiService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class CreateApiService extends Command
 {
@@ -12,7 +13,7 @@ class CreateApiService extends Command
      *
      * @var string
      */
-    protected $signature = 'create:apiservice {name}';
+    protected $signature = 'create:apiservice {name} {tokenTypeIds*}';
 
     /**
      * The console command description.
@@ -39,7 +40,14 @@ class CreateApiService extends Command
     public function handle()
     {
         $name = $this->argument('name');
+        $tokenTypeIds = $this->argument('tokenTypeIds');
+
         $apiService = ApiService::create(['name' => $name]);
+
+        foreach ($tokenTypeIds as $tokenTypeId) {
+            $apiService->tokenTypes()->attach($tokenTypeId);
+        }
+
         $this->info("API service '{$apiService->name}' created successfully with ID {$apiService->id}");
 
         return 0;

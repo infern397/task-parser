@@ -16,7 +16,7 @@ class FetchOrders extends FetchDataCommand
      *
      * @var string
      */
-    protected $signature = 'fetch:orders';
+    protected $signature = 'fetch:orders {userId}';
 
     /**
      * The console command description.
@@ -30,9 +30,10 @@ class FetchOrders extends FetchDataCommand
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(ApiService $apiService)
     {
         parent::__construct();
+        $this->apiService = $apiService;
     }
 
     /**
@@ -40,14 +41,30 @@ class FetchOrders extends FetchDataCommand
      *
      * @return int
      */
-    public function handle(ApiService $apiService)
+    public function handle()
     {
+        $userId = $this->argument('userId');
+        $account = $this->getAccount($userId);
+
+        if (!$account) {
+            $this->error('Account not found');
+            return 0;
+        }
+
+        $apiKey = $account->getValidToken();
+        if (!$apiKey) {
+            $this->error('Valid API token not found');
+            return 0;
+        }
+
+        $this->apiService->setApiKey($apiKey);
+        $this->info("Orders fetching for account {$account['id']} starting");
+
         $this->fetchDataAndSave(
-            $apiService,
+            $this->apiService,
             'orders',
             '1000-01-01',
             '9999-12-31',
-            env('API_KEY'),
             500,
             new Order
         );

@@ -20,7 +20,6 @@ class Token extends Model
         return $this->belongsTo(Account::class);
     }
 
-    // Связь с типом токена
     public function tokenType()
     {
         return $this->belongsTo(TokenType::class);

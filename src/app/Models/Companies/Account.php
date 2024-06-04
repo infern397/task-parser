@@ -16,21 +16,32 @@ class Account extends Model
         'password',
     ];
 
-    // Связь с компанией
     public function company()
     {
         return $this->belongsTo(Company::class);
     }
 
-    // Связь с API сервисом
     public function apiService()
     {
         return $this->belongsTo(ApiService::class);
     }
 
-    // Связь с токенами
     public function tokens()
     {
         return $this->hasMany(Token::class);
+    }
+
+    public function getValidToken()
+    {
+        $apiService = $this->apiService;
+
+        foreach ($apiService->tokenTypes as $tokenType) {
+            $token = $this->tokens()->where('token_type_id', $tokenType->id)->first();
+            if ($token) {
+                return $token->token;
+            }
+        }
+
+        return null;
     }
 }

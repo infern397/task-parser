@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 class ApiService
 {
     protected $client;
+    protected $apiKey;
 
     public function __construct()
     {
@@ -15,14 +16,19 @@ class ApiService
         ]);
     }
 
-    public function fetchData($type, $dateFrom, $dateTo, $page, $key, $limit)
+    public function setApiKey($key)
+    {
+        $this->apiKey = $key;
+    }
+
+    public function fetchData($type, $dateFrom, $dateTo, $page, $limit)
     {
         $response = $this->client->request('GET', "/api/{$type}", [
             'query' => [
                 'dateFrom' => $dateFrom,
                 'dateTo' => $dateTo,
                 'page' => $page,
-                'key' => $key,
+                'key' => $this->apiKey,
                 'limit' => $limit
             ]
         ]);
