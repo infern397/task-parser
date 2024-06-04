@@ -3,14 +3,15 @@
 namespace App\Console\Commands;
 
 use App\Models\Companies\Account;
-use App\Services\ApiService;
+use App\Models\Companies\ApiService;
+use App\Services\FetchApiService;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Console\Command;
 
 abstract class FetchDataCommand extends Command
 {
-    protected function fetchDataAndSave(ApiService $apiService, string $endpoint, string $dateFrom, string $dateTo, int $limit, Model $model, int $userId)
+    protected function fetchDataAndSave(FetchApiService $apiService, string $endpoint, string $dateFrom, string $dateTo, int $limit, Model $model, int $userId)
     {
         $model::query()->where('account_id', $userId)->delete();
         $page = 1;
@@ -20,11 +21,16 @@ abstract class FetchDataCommand extends Command
             try {
                 $data = $apiService->fetchData($endpoint, $dateFrom, $dateTo, $page, $limit);
             } catch (ClientException $e) {
-                if ($e->getResponse()->getStatusCode() == 429) {
+                $statusCode = $e->getResponse()->getStatusCode();
+                if ($statusCode == 429) {
                     $this->info('Rate limit exceeded, sleeping for 45 seconds');
                     sleep(45);
                     continue;
+                } elseif ($statusCode == 403) {
+                    $this->error('Access forbidden for this account, skipping');
+                    break;
                 }
+
                 throw $e;
             }
 
@@ -53,8 +59,24 @@ abstract class FetchDataCommand extends Command
         $this->info(ucfirst($endpoint) . ' fetched successfully');
     }
 
-    protected function getAccount($userId)
+    protected function getApiService($apiServiceId)
     {
-        return Account::find($userId);
+        return ApiService::find($apiServiceId);
+    }
+
+    protected function prepareFetch($dateArgument = null)
+    {
+        $dateFrom = $dateArgument ? $this->argument($dateArgument) : '1000-01-01';
+        $apiServiceId = $this->argument('apiServiceId');
+        $apiService = $this->getApiService($apiServiceId);
+
+        if (!$apiService) {
+            $this->error('Service not found');
+            return 0;
+        }
+
+        $accounts = $apiService->accounts;
+
+        return [$dateFrom, $accounts];
     }
 }

@@ -13,7 +13,7 @@ class CreateApiService extends Command
      *
      * @var string
      */
-    protected $signature = 'create:apiservice {name} {tokenTypeIds*}';
+    protected $signature = 'create:apiservice {name} {tokenTypeId}';
 
     /**
      * The console command description.
@@ -40,13 +40,12 @@ class CreateApiService extends Command
     public function handle()
     {
         $name = $this->argument('name');
-        $tokenTypeIds = $this->argument('tokenTypeIds');
+        $tokenTypeId = $this->argument('tokenTypeId');
 
-        $apiService = ApiService::create(['name' => $name]);
-
-        foreach ($tokenTypeIds as $tokenTypeId) {
-            $apiService->tokenTypes()->attach($tokenTypeId);
-        }
+        $apiService = ApiService::create([
+            'name' => $name,
+            'token_type_id' => $tokenTypeId,
+        ]);
 
         $this->info("API service '{$apiService->name}' created successfully with ID {$apiService->id}");
 

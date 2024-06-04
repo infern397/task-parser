@@ -1,5 +1,63 @@
 # Тестовое задание
 
+## Вторая часть
+
+### Команды для создания сущностей
+
+Создание аккаунта
+```bash
+php artisan create:account {companyId} {tokenId} {username} {password}
+```
+
+Создание апи сервиса
+```bash
+php artisan create:apiservice {name} {tokenTypeId}
+```
+
+Создание компании
+```bash
+php artisan create:company {name}
+```
+
+Создание токена
+```bash
+php artisan create:token {tokenTypeId} {apiServiceId} {token}
+```
+
+Создание типа токена
+```bash
+php artisan create:tokentype {type}
+```
+
+### Ежедневное обновление
+Для запуска планировщика ежедневного обновления в час ночи и час дня нужно ввести эту команду
+```bash
+php artisan schedule:work
+```
+
+### Команды для выгрузки данных
+Претерпели изменения из-за добавления Api сервисов и получения данных по времени
+
+```bash
+php artisan fetch:all {apiServiceId?} {date?}
+```
+
+```bash
+php artisan fetch:orders {apiServiceId} {date?}
+```
+
+```bash
+php artisan fetch:incomes {apiServiceId} {date?}
+```
+
+```bash
+php artisan fetch:sales {apiServiceId} {date?}
+```
+
+```bash
+php artisan fetch:stocks {apiServiceId}
+```
+
 ## Данные для доступа к БД
 
 - **База**: `semenmocha`

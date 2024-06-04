@@ -16,6 +16,7 @@ class CreateApiServicesTable extends Migration
         Schema::create('api_services', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->foreignId('token_type_id')->constrained('token_types')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -11,15 +11,23 @@ class ApiService extends Model
 
     protected $fillable = [
         'name',
+        'token_type_id',
     ];
 
     public function accounts()
     {
-        return $this->hasMany(Account::class);
+        return $this->hasManyThrough(
+            Account::class,
+            Token::class,
+            'api_service_id',
+            'token_id',
+            'id',
+            'id'
+        );
     }
 
     public function tokenTypes()
     {
-        return $this->belongsToMany(TokenType::class, 'api_service_token_type');
+        return $this->belongsTo(TokenType::class);
     }
 }

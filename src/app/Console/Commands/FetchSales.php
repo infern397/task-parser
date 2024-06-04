@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Sale;
-use App\Services\ApiService;
+use App\Services\FetchApiService;
 use Illuminate\Console\Command;
 
 class FetchSales extends FetchDataCommand
@@ -13,21 +13,25 @@ class FetchSales extends FetchDataCommand
      *
      * @var string
      */
-    protected $signature = 'fetch:sales {userId}';
+    protected $signature = 'fetch:sales {apiServiceId} {date?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Fetch sales from the API';
+    protected $description = 'Fetch sales from the API {apiServiceId}';
+    /**
+     * @var array|string
+     */
+    private $dateFrom;
 
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(ApiService $apiService)
+    public function __construct(FetchApiService $apiService)
     {
         parent::__construct();
         $this->apiService = $apiService;
@@ -40,31 +44,28 @@ class FetchSales extends FetchDataCommand
      */
     public function handle()
     {
-        $userId = $this->argument('userId');
-        $account = $this->getAccount($userId);
+        list($dateFrom, $accounts) = $this->prepareFetch();
 
-        if (!$account) {
-            $this->error('Account not found');
-            return 0;
+        foreach ($accounts as $account) {
+            $apiKey = $account->token['token'];
+            if (!$apiKey) {
+                $this->error('Valid API token not found');
+                return 0;
+            }
+
+            $this->apiService->setApiKey($apiKey);
+
+            $this->info("Sales fetching for account {$account['username']} starting");
+
+            $this->fetchDataAndSave(
+                $this->apiService,
+                'sales',
+                $dateFrom,
+                '9999-12-31',
+                500,
+                new Sale,
+                $account['id']
+            );
         }
-
-        $apiKey = $account->getValidToken();
-        if (!$apiKey) {
-            $this->error('Valid API token not found');
-            return 0;
-        }
-
-        $this->apiService->setApiKey($apiKey);
-
-        $this->info("Sales fetching for account {$account['username']} starting");
-
-        $this->fetchDataAndSave(
-            $this->apiService,
-            'sales',
-            '1000-01-01',
-            '9999-12-31',
-            500,
-            new Sale,
-            $userId
-        );
-    }}
+    }
+}

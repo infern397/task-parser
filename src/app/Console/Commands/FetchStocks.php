@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Stock;
-use App\Services\ApiService;
+use App\Services\FetchApiService;
 use Illuminate\Console\Command;
 
 class FetchStocks extends FetchDataCommand
@@ -13,16 +13,16 @@ class FetchStocks extends FetchDataCommand
      *
      * @var string
      */
-    protected $signature = 'fetch:stocks {userId}';
+    protected $signature = 'fetch:stocks {apiServiceId}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Fetch stocks from the API';
+    protected $description = 'Fetch stocks from the API {apiServiceId}';
     /**
-     * @var ApiService
+     * @var FetchApiService
      */
     private $apiService;
 
@@ -31,7 +31,7 @@ class FetchStocks extends FetchDataCommand
      *
      * @return void
      */
-    public function __construct(ApiService $apiService)
+    public function __construct(FetchApiService $apiService)
     {
         parent::__construct();
         $this->apiService = $apiService;
@@ -44,31 +44,26 @@ class FetchStocks extends FetchDataCommand
      */
     public function handle()
     {
-        $userId = $this->argument('userId');
-        $account = $this->getAccount($userId);
+        list(, $accounts) = $this->prepareFetch();
+        foreach ($accounts as $account) {
+            $apiKey = $account->token['token'];
+            if (!$apiKey) {
+                $this->error('Valid API token not found');
+                return 0;
+            }
 
-        if (!$account) {
-            $this->error('Account not found');
-            return 0;
+            $this->apiService->setApiKey($apiKey);
+            $this->info("Stocks fetching for account {$account['username']} starting");
+
+            $this->fetchDataAndSave(
+                $this->apiService,
+                'stocks',
+                date('Y-m-d'),
+                '2024-12-31',
+                500,
+                new Stock(),
+                $account['id']
+            );
         }
-
-        $apiKey = $account->getValidToken();
-        if (!$apiKey) {
-            $this->error('Valid API token not found');
-            return 0;
-        }
-
-        $this->apiService->setApiKey($apiKey);
-        $this->info("Stocks fetching for account {$account['username']} starting");
-
-        $this->fetchDataAndSave(
-            $this->apiService,
-            'stocks',
-            date('Y-m-d'),
-            '2024-12-31',
-            500,
-            new Stock(),
-            $userId
-        );
     }
 }

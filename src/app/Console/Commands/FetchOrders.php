@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Order;
 use App\Models\Sale;
 use App\Models\Stock;
-use App\Services\ApiService;
+use App\Services\FetchApiService;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Console\Command;
 
@@ -16,21 +16,25 @@ class FetchOrders extends FetchDataCommand
      *
      * @var string
      */
-    protected $signature = 'fetch:orders {userId}';
+    protected $signature = 'fetch:orders {apiServiceId} {date?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Fetch orders from the API';
+    protected $description = 'Fetch orders from the API {apiServiceId}';
+    /**
+     * @var array|string
+     */
+    private $dateFrom;
 
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(ApiService $apiService)
+    public function __construct(FetchApiService $apiService)
     {
         parent::__construct();
         $this->apiService = $apiService;
@@ -43,31 +47,27 @@ class FetchOrders extends FetchDataCommand
      */
     public function handle()
     {
-        $userId = $this->argument('userId');
-        $account = $this->getAccount($userId);
+        list($dateFrom, $accounts) = $this->prepareFetch();
 
-        if (!$account) {
-            $this->error('Account not found');
-            return 0;
+        foreach ($accounts as $account) {
+            $apiKey = $account->token['token'];
+            if (!$apiKey) {
+                $this->error('Valid API token not found');
+                return 0;
+            }
+
+            $this->apiService->setApiKey($apiKey);
+            $this->info("Orders fetching for account {$account['username']} starting");
+
+            $this->fetchDataAndSave(
+                $this->apiService,
+                'orders',
+                $dateFrom,
+                '9999-12-31',
+                500,
+                new Order,
+                $account['id']
+            );
         }
-
-        $apiKey = $account->getValidToken();
-        if (!$apiKey) {
-            $this->error('Valid API token not found');
-            return 0;
-        }
-
-        $this->apiService->setApiKey($apiKey);
-        $this->info("Orders fetching for account {$account['username']} starting");
-
-        $this->fetchDataAndSave(
-            $this->apiService,
-            'orders',
-            '1000-01-01',
-            '9999-12-31',
-            500,
-            new Order,
-            $userId
-        );
     }
 }
