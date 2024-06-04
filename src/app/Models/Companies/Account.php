@@ -11,7 +11,7 @@ class Account extends Model
 
     protected $fillable = [
         'company_id',
-        'api_service_id',
+        'token_id',
         'username',
         'password',
     ];
@@ -21,27 +21,8 @@ class Account extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function apiService()
+    public function token()
     {
-        return $this->belongsTo(ApiService::class);
-    }
-
-    public function tokens()
-    {
-        return $this->hasMany(Token::class);
-    }
-
-    public function getValidToken()
-    {
-        $apiService = $this->apiService;
-
-        foreach ($apiService->tokenTypes as $tokenType) {
-            $token = $this->tokens()->where('token_type_id', $tokenType->id)->first();
-            if ($token) {
-                return $token->token;
-            }
-        }
-
-        return null;
+        return $this->belongsTo(Token::class);
     }
 }

@@ -10,8 +10,8 @@ class Token extends Model
     use HasFactory;
 
     protected $fillable = [
-        'account_id',
         'token_type_id',
+        'api_service_id',
         'token',
     ];
 

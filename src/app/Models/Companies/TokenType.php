@@ -11,16 +11,5 @@ class TokenType extends Model
 
     protected $fillable = [
         'type',
-        'api_service_id',
     ];
-
-    public function apiServices()
-    {
-        return $this->belongsToMany(ApiService::class, 'api_service_token_type');
-    }
-
-    public function tokens()
-    {
-        return $this->hasMany(Token::class);
-    }
 }
