@@ -13,7 +13,10 @@ abstract class FetchDataCommand extends Command
 {
     protected function fetchDataAndSave(FetchApiService $apiService, string $endpoint, string $dateFrom, string $dateTo, int $limit, Model $model, int $userId)
     {
-        $model::query()->where('account_id', $userId)->delete();
+        $model::query()
+            ->where('account_id', $userId)
+            ->where('date', '>=', $dateFrom)
+            ->delete();
         $page = 1;
         $insertThreshold = 10000;
 
@@ -36,7 +39,7 @@ abstract class FetchDataCommand extends Command
 
             $allData = [];
             foreach ($data['data'] as $item) {
-                $item['account_id'] = $userId; // Add the user ID to each item
+                $item['account_id'] = $userId;
                 $allData[] = $item;
 
                 if (count($allData) >= $insertThreshold) {
