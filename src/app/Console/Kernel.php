@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('fetch:incomes')->twiceDaily();
+        $schedule->command('fetch:all')->twiceDaily();
     }
 
     /**
