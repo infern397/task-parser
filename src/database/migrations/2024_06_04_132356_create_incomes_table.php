@@ -28,6 +28,7 @@ class CreateIncomesTable extends Migration
             $table->string('warehouse_name');
             $table->bigInteger('nm_id');
             $table->string('status');
+            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
             $table->timestamps();
         });
     }

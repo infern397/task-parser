@@ -58,7 +58,7 @@ class FetchOrders extends FetchDataCommand
         }
 
         $this->apiService->setApiKey($apiKey);
-        $this->info("Orders fetching for account {$account['id']} starting");
+        $this->info("Orders fetching for account {$account['username']} starting");
 
         $this->fetchDataAndSave(
             $this->apiService,
@@ -66,7 +66,8 @@ class FetchOrders extends FetchDataCommand
             '1000-01-01',
             '9999-12-31',
             500,
-            new Order
+            new Order,
+            $userId
         );
     }
 }

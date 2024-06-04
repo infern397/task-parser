@@ -57,14 +57,15 @@ class FetchIncomes extends FetchDataCommand
         }
 
         $this->apiService->setApiKey($apiKey);
-        $this->info("Orders fetching for account {$account['id']} starting");
+        $this->info("Incomes fetching for account {$account['username']} starting");
         $this->fetchDataAndSave(
             $this->apiService,
             'incomes',
             '1000-01-01',
             '9999-12-31',
             500,
-            new Income
+            new Income,
+            $userId
         );
     }
 }

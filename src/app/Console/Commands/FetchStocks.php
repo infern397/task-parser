@@ -59,15 +59,16 @@ class FetchStocks extends FetchDataCommand
         }
 
         $this->apiService->setApiKey($apiKey);
-        $this->info("Stocks fetching for account {$account['id']} starting");
+        $this->info("Stocks fetching for account {$account['username']} starting");
 
         $this->fetchDataAndSave(
             $this->apiService,
             'stocks',
             date('Y-m-d'),
             '2024-12-31',
-            600,
-            new Stock()
+            500,
+            new Stock(),
+            $userId
         );
     }
 }

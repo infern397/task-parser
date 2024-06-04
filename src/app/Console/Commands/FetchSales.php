@@ -56,7 +56,7 @@ class FetchSales extends FetchDataCommand
 
         $this->apiService->setApiKey($apiKey);
 
-        $this->info("Sales fetching for account {$account['id']} starting");
+        $this->info("Sales fetching for account {$account['username']} starting");
 
         $this->fetchDataAndSave(
             $this->apiService,
@@ -64,6 +64,7 @@ class FetchSales extends FetchDataCommand
             '1000-01-01',
             '9999-12-31',
             500,
-            new Sale
+            new Sale,
+            $userId
         );
     }}

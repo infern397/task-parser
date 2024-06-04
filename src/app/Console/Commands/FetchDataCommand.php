@@ -10,9 +10,9 @@ use Illuminate\Console\Command;
 
 abstract class FetchDataCommand extends Command
 {
-    protected function fetchDataAndSave(ApiService $apiService, string $endpoint, string $dateFrom, string $dateTo, int $limit, Model $model)
+    protected function fetchDataAndSave(ApiService $apiService, string $endpoint, string $dateFrom, string $dateTo, int $limit, Model $model, int $userId)
     {
-        $model::query()->truncate();
+        $model::query()->where('account_id', $userId)->delete();
         $page = 1;
         $insertThreshold = 10000;
 
@@ -25,12 +25,12 @@ abstract class FetchDataCommand extends Command
                     sleep(45);
                     continue;
                 }
-
                 throw $e;
             }
 
             $allData = [];
             foreach ($data['data'] as $item) {
+                $item['account_id'] = $userId; // Add the user ID to each item
                 $allData[] = $item;
 
                 if (count($allData) >= $insertThreshold) {
