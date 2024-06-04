@@ -10,8 +10,8 @@ class ApiService extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_id',
-        'token_id',
+        'name',
+        'token_type_id',
     ];
 
     public function accounts()
@@ -28,6 +28,6 @@ class ApiService extends Model
 
     public function tokenTypes()
     {
-        return $this->hasOne(TokenType::class);
+        return $this->belongsTo(TokenType::class);
     }
 }

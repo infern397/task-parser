@@ -3,14 +3,15 @@
 namespace App\Console\Commands;
 
 use App\Models\Companies\Account;
-use App\Services\ApiService;
+use App\Models\Companies\ApiService;
+use App\Services\FetchApiService;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Console\Command;
 
 abstract class FetchDataCommand extends Command
 {
-    protected function fetchDataAndSave(ApiService $apiService, string $endpoint, string $dateFrom, string $dateTo, int $limit, Model $model, int $userId)
+    protected function fetchDataAndSave(FetchApiService $apiService, string $endpoint, string $dateFrom, string $dateTo, int $limit, Model $model, int $userId)
     {
         $model::query()->where('account_id', $userId)->delete();
         $page = 1;
@@ -53,8 +54,8 @@ abstract class FetchDataCommand extends Command
         $this->info(ucfirst($endpoint) . ' fetched successfully');
     }
 
-    protected function getAccount($userId)
+    protected function getApiService($apiServiceId)
     {
-        return Account::find($userId);
+        return ApiService::find($apiServiceId);
     }
 }

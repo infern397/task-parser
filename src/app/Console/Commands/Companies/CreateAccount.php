@@ -6,6 +6,7 @@ use App\Models\Companies\Account;
 use App\Models\Companies\ApiService;
 use App\Models\Companies\Company;
 
+use App\Models\Companies\Token;
 use Illuminate\Console\Command;
 
 class CreateAccount extends Command
@@ -15,7 +16,7 @@ class CreateAccount extends Command
      *
      * @var string
      */
-    protected $signature = 'create:account {companyId} {apiServiceId} {username} {password}';
+    protected $signature = 'create:account {companyId} {tokenId} {username} {password}';
 
     /**
      * The console command description.
@@ -42,26 +43,26 @@ class CreateAccount extends Command
     public function handle()
     {
         $companyId = $this->argument('companyId');
-        $apiServiceId = $this->argument('apiServiceId');
+        $tokenId = $this->argument('tokenId');
         $username = $this->argument('username');
         $password = $this->argument('password');
 
         $company = Company::find($companyId);
-        $apiService = ApiService::find($apiServiceId);
+        $token = Token::find($tokenId);
 
-        if (!$company || !$apiService) {
-            $this->error("Company or API service not found.");
+        if (!$company || !$token) {
+            $this->error("Company or Token not found.");
             return 0;
         }
 
         $account = Account::create([
             'company_id' => $companyId,
-            'api_service_id' => $apiServiceId,
+            'token_id' => $tokenId,
             'username' => $username,
             'password' => bcrypt($password)
         ]);
 
-        $this->info("Account '{$account->username}' created successfully for company '{$company->name}' and API service '{$apiService->name}' with ID {$account->id}");
+        $this->info("Account '{$account->username}' created successfully for company '{$company->name}' with token ID {$token->id} and account ID {$account->id}");
         return 0;
     }
 }

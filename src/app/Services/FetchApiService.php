@@ -4,7 +4,7 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 
-class ApiService
+class FetchApiService
 {
     protected $client;
     protected $apiKey;

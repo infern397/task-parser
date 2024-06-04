@@ -1,12 +1,13 @@
 <?php
 namespace App\Console\Commands;
 
+use App\Models\Companies\ApiService;
 use Illuminate\Console\Command;
 use App\Models\Companies\Account;
 
 class FetchAllData extends Command
 {
-    protected $signature = 'fetch:all {userId?} {date?}';
+    protected $signature = 'fetch:all {apiServiceId?} {date?}';
     protected $description = 'Fetch all data from API for all users or specific user';
 
     public function __construct()
@@ -18,21 +19,20 @@ class FetchAllData extends Command
     {
         $dateFrom = $this->argument('date');
 
-        $userId = (int) $this->argument('userId');
-        $accountsQuery = Account::query();
+        $apiServiceId = (int) $this->argument('apiServiceId');
+        $apiServicesQuery = ApiService::query();
 
-        if ($userId) {
-            $accountsQuery->where('id', $userId);
+        if ($apiServiceId) {
+            $apiServicesQuery->where('id', $apiServiceId);
         }
 
-        $accounts = $accountsQuery->get();
-        $this->info($userId);
+        $apiServices = $apiServicesQuery->get();
 
-        foreach ($accounts as $account) {
-            $this->call('fetch:stocks', ['userId' => $account->id]);
-            $this->call('fetch:incomes', ['userId' => $account->id, 'date' => $dateFrom]);
-            $this->call('fetch:sales', ['userId' => $account->id, 'date' => $dateFrom]);
-            $this->call('fetch:orders', ['userId' => $account->id, 'date' => $dateFrom]);
+        foreach ($apiServices as $apiService) {
+            $this->call('fetch:stocks', ['apiServiceId' => $apiService->id]);
+            $this->call('fetch:incomes', ['apiServiceId' => $apiService->id, 'date' => $dateFrom]);
+            $this->call('fetch:sales', ['apiServiceId' => $apiService->id, 'date' => $dateFrom]);
+            $this->call('fetch:orders', ['apiServiceId' => $apiService->id, 'date' => $dateFrom]);
         }
 
         $this->info('All data fetched successfully');

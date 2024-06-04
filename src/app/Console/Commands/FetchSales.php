@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Sale;
-use App\Services\ApiService;
+use App\Services\FetchApiService;
 use Illuminate\Console\Command;
 
 class FetchSales extends FetchDataCommand
@@ -13,14 +13,14 @@ class FetchSales extends FetchDataCommand
      *
      * @var string
      */
-    protected $signature = 'fetch:sales {userId} {date?}';
+    protected $signature = 'fetch:sales {apiServiceId} {date?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Fetch sales from the API';
+    protected $description = 'Fetch sales from the API {apiServiceId}';
     /**
      * @var array|string
      */
@@ -31,7 +31,7 @@ class FetchSales extends FetchDataCommand
      *
      * @return void
      */
-    public function __construct(ApiService $apiService)
+    public function __construct(FetchApiService $apiService)
     {
         parent::__construct();
         $this->apiService = $apiService;
@@ -46,32 +46,36 @@ class FetchSales extends FetchDataCommand
     {
         $dateFrom = $this->argument('date') ?? '1000-01-01';
 
-        $userId = $this->argument('userId');
-        $account = $this->getAccount($userId);
+        $apiServiceId = $this->argument('apiServiceId');
+        $apiService = $this->getApiService($apiServiceId);
 
-        if (!$account) {
-            $this->error('Account not found');
+        if (!$apiService) {
+            $this->error('Service not found');
             return 0;
         }
 
-        $apiKey = $account->getValidToken();
-        if (!$apiKey) {
-            $this->error('Valid API token not found');
-            return 0;
+        $this->info("Stocks fetching for service {$apiService['name']} starting");
+        $accounts = $apiService->accounts;
+        foreach ($accounts as $account) {
+            $apiKey = $account->token['token'];
+            if (!$apiKey) {
+                $this->error('Valid API token not found');
+                return 0;
+            }
+
+            $this->apiService->setApiKey($apiKey);
+
+            $this->info("Sales fetching for account {$account['username']} starting");
+
+            $this->fetchDataAndSave(
+                $this->apiService,
+                'sales',
+                $dateFrom,
+                '9999-12-31',
+                500,
+                new Sale,
+                $account['id']
+            );
         }
-
-        $this->apiService->setApiKey($apiKey);
-
-        $this->info("Sales fetching for account {$account['username']} starting");
-
-        $this->fetchDataAndSave(
-            $this->apiService,
-            'sales',
-            $dateFrom,
-            '9999-12-31',
-            500,
-            new Sale,
-            $userId
-        );
     }
 }
