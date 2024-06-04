@@ -21,11 +21,16 @@ abstract class FetchDataCommand extends Command
             try {
                 $data = $apiService->fetchData($endpoint, $dateFrom, $dateTo, $page, $limit);
             } catch (ClientException $e) {
-                if ($e->getResponse()->getStatusCode() == 429) {
+                $statusCode = $e->getResponse()->getStatusCode();
+                if ($statusCode == 429) {
                     $this->info('Rate limit exceeded, sleeping for 45 seconds');
                     sleep(45);
                     continue;
+                } elseif ($statusCode == 403) {
+                    $this->error('Access forbidden for this account, skipping');
+                    break;
                 }
+
                 throw $e;
             }
 
