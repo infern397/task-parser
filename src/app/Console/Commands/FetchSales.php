@@ -13,7 +13,7 @@ class FetchSales extends FetchDataCommand
      *
      * @var string
      */
-    protected $signature = 'fetch:sales {userId}';
+    protected $signature = 'fetch:sales {userId} {date?}';
 
     /**
      * The console command description.
@@ -21,6 +21,10 @@ class FetchSales extends FetchDataCommand
      * @var string
      */
     protected $description = 'Fetch sales from the API';
+    /**
+     * @var array|string
+     */
+    private $dateFrom;
 
     /**
      * Create a new command instance.
@@ -40,6 +44,8 @@ class FetchSales extends FetchDataCommand
      */
     public function handle()
     {
+        $dateFrom = $this->argument('date') ?? '1000-01-01';
+
         $userId = $this->argument('userId');
         $account = $this->getAccount($userId);
 
@@ -61,10 +67,11 @@ class FetchSales extends FetchDataCommand
         $this->fetchDataAndSave(
             $this->apiService,
             'sales',
-            '1000-01-01',
+            $dateFrom,
             '9999-12-31',
             500,
             new Sale,
             $userId
         );
-    }}
+    }
+}

@@ -15,7 +15,7 @@ class FetchIncomes extends FetchDataCommand
      *
      * @var string
      */
-    protected $signature = 'fetch:incomes {userId}';
+    protected $signature = 'fetch:incomes {userId} {date?}';
 
     /**
      * The console command description.
@@ -23,6 +23,9 @@ class FetchIncomes extends FetchDataCommand
      * @var string
      */
     protected $description = 'Fetch incomes from API {userId}';
+    /**
+     * @var array|string
+     */
 
     /**
      * Create a new command instance.
@@ -42,6 +45,7 @@ class FetchIncomes extends FetchDataCommand
      */
     public function handle()
     {
+        $dateFrom = $this->argument('date') ?? '1000-01-01';
         $userId = $this->argument('userId');
         $account = $this->getAccount($userId);
 
@@ -61,7 +65,7 @@ class FetchIncomes extends FetchDataCommand
         $this->fetchDataAndSave(
             $this->apiService,
             'incomes',
-            '1000-01-01',
+            $dateFrom,
             '9999-12-31',
             500,
             new Income,
