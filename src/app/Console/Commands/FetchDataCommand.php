@@ -63,4 +63,20 @@ abstract class FetchDataCommand extends Command
     {
         return ApiService::find($apiServiceId);
     }
+
+    protected function prepareFetch($dateArgument = null)
+    {
+        $dateFrom = $dateArgument ? $this->argument($dateArgument) : '1000-01-01';
+        $apiServiceId = $this->argument('apiServiceId');
+        $apiService = $this->getApiService($apiServiceId);
+
+        if (!$apiService) {
+            $this->error('Service not found');
+            return 0;
+        }
+
+        $accounts = $apiService->accounts;
+
+        return [$dateFrom, $accounts];
+    }
 }

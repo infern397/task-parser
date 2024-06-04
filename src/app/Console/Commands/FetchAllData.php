@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Console\Commands;
 
 use App\Models\Companies\ApiService;
@@ -19,7 +20,7 @@ class FetchAllData extends Command
     {
         $dateFrom = $this->argument('date');
 
-        $apiServiceId = (int) $this->argument('apiServiceId');
+        $apiServiceId = (int)$this->argument('apiServiceId');
         $apiServicesQuery = ApiService::query();
 
         if ($apiServiceId) {
@@ -29,6 +30,7 @@ class FetchAllData extends Command
         $apiServices = $apiServicesQuery->get();
 
         foreach ($apiServices as $apiService) {
+            $this->info("Fetching for service {$apiService['name']} starting");
             $this->call('fetch:stocks', ['apiServiceId' => $apiService->id]);
             $this->call('fetch:incomes', ['apiServiceId' => $apiService->id, 'date' => $dateFrom]);
             $this->call('fetch:sales', ['apiServiceId' => $apiService->id, 'date' => $dateFrom]);

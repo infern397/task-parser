@@ -44,15 +44,7 @@ class FetchStocks extends FetchDataCommand
      */
     public function handle()
     {
-        $apiServiceId = $this->argument('apiServiceId');
-        $apiService = $this->getApiService($apiServiceId);
-
-        if (!$apiService) {
-            $this->error('Service not found');
-            return 0;
-        }
-        $this->info("Stocks fetching for service {$apiService['name']} starting");
-        $accounts = $apiService->accounts;
+        list(, $accounts) = $this->prepareFetch();
         foreach ($accounts as $account) {
             $apiKey = $account->token['token'];
             if (!$apiKey) {

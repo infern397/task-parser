@@ -44,18 +44,8 @@ class FetchSales extends FetchDataCommand
      */
     public function handle()
     {
-        $dateFrom = $this->argument('date') ?? '1000-01-01';
+        list($dateFrom, $accounts) = $this->prepareFetch();
 
-        $apiServiceId = $this->argument('apiServiceId');
-        $apiService = $this->getApiService($apiServiceId);
-
-        if (!$apiService) {
-            $this->error('Service not found');
-            return 0;
-        }
-
-        $this->info("Stocks fetching for service {$apiService['name']} starting");
-        $accounts = $apiService->accounts;
         foreach ($accounts as $account) {
             $apiKey = $account->token['token'];
             if (!$apiKey) {
