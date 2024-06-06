@@ -26,7 +26,8 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./mysql-data:/var/lib/mysql
+      - ./mysql-files:/var/lib/mysql-files
     ports:
       - "3307:3306"
     networks:

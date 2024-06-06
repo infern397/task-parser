@@ -1,2 +1,4 @@
 .env
 .idea/
+mysql-data/
+mysql-files/
